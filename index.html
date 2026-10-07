@@ -1,101 +1,107 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Work Passport</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f7fb;
-      color: #172033;
-    }
-    header {
-      background: #172033;
-      color: white;
-      padding: 24px;
-      text-align: center;
-    }
-    .hero {
-      background: white;
-      padding: 70px 25px;
-      text-align: center;
-    }
-    .hero h1 {
-      font-size: 42px;
-      margin-bottom: 15px;
-    }
-    .hero p {
-      font-size: 19px;
-      max-width: 700px;
-      margin: auto;
-      line-height: 1.6;
-    }
-    .section {
-      max-width: 1000px;
-      margin: auto;
-      padding: 50px 25px;
-    }
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-    }
-    .card {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-    }
-    footer {
-      text-align: center;
-      padding: 30px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI Work Passport</title>
+<style>
+:root{--ink:#14213d;--blue:#2457d6;--bg:#f4f7fb;--line:#dfe6f1;--good:#176b46;--warn:#8a5a00}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#101b35;color:white;padding:22px 6%;display:flex;justify-content:space-between;align-items:center}
+.brand{font-weight:800;font-size:21px}.badge{font-size:12px;background:#263657;padding:7px 10px;border-radius:20px}
+.hero{padding:64px 6% 42px;background:white;text-align:center}.hero h1{font-size:44px;margin:0 0 12px}.hero p{max-width:760px;margin:auto;font-size:19px;line-height:1.55;color:#4c5870}
+.wrap{max-width:1100px;margin:auto;padding:34px 24px}.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:22px;box-shadow:0 8px 24px rgba(20,33,61,.05)}
+.row{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}.muted{color:#657087}.status{font-weight:700}
+button{border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#edf2ff;color:var(--blue)}.danger{background:#fff0f0;color:#a52a2a}.verify{background:#fff5dd;color:var(--warn)}
+.sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:16px}.source{border:1px solid var(--line);border-radius:12px;padding:14px}.source label{display:flex;gap:9px;align-items:center}
+.item{border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:12px}.item h3{margin:0 0 7px;font-size:17px}.meta{font-size:13px;color:#6c778b;margin-bottom:12px}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.timeline{border-left:3px solid #cdd9f5;margin-left:8px;padding-left:22px}.event{margin:0 0 20px;position:relative}.event:before{content:"";width:11px;height:11px;background:var(--blue);border-radius:50%;position:absolute;left:-29px;top:4px}.verified{color:var(--good);font-weight:700;font-size:13px}
+.four{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}.concept{background:white;border:1px solid var(--line);padding:18px;border-radius:13px}.concept h3{margin-top:0}
+.notice{background:#eef7f2;border:1px solid #cde6d8;padding:13px;border-radius:10px;color:#245a42;font-size:14px}.empty{color:#7b8598;font-style:italic;padding:8px 0}
+footer{text-align:center;padding:28px;color:#6c778b}
+@media(max-width:600px){.hero h1{font-size:34px}}
+</style>
 </head>
 <body>
-
-<header>
-  <h2>AI Work Passport</h2>
-</header>
-
+<header><div class="brand">AI Work Passport</div><div class="badge">Interactive Prototype</div></header>
 <section class="hero">
-  <h1>Your Work. Your Proof. Your Passport.</h1>
-  <p>
-    Build a trusted, portable record of your work, skills,
-    accomplishments, and evidence.
-  </p>
+<h1>Your Work. Your Proof. Your Passport.</h1>
+<p>A trusted, portable record built from evidence of real work—with provenance, user control, and verification.</p>
 </section>
 
-<section class="section">
-  <div class="cards">
-
-    <div class="card">
-      <h2>Evidence</h2>
-      <p>Attach proof of completed work and accomplishments.</p>
-    </div>
-
-    <div class="card">
-      <h2>Verification</h2>
-      <p>Create records that can be checked and trusted.</p>
-    </div>
-
-    <div class="card">
-      <h2>Provenance</h2>
-      <p>Preserve where evidence came from and when it was recorded.</p>
-    </div>
-
-    <div class="card">
-      <h2>Portable Passport</h2>
-      <p>Build a work history you control and can carry forward.</p>
-    </div>
-
-  </div>
+<main class="wrap">
+<section class="panel">
+<div class="row">
+<div><h2 style="margin:0 0 6px">Capture My Work</h2><div class="muted">You control when capture is active and which sources are allowed.</div></div>
+<button id="captureBtn" class="primary" onclick="toggleCapture()">Start Capture</button>
+</div>
+<p id="captureStatus" class="status">Capture is OFF</p>
+<div class="notice">Prototype note: this page simulates captured work for demonstration. It does not access your computer, browser, email, documents, or external accounts.</div>
+<div class="sources">
+<div class="source"><label><input type="checkbox" checked> Project activity</label></div>
+<div class="source"><label><input type="checkbox"> Documents</label></div>
+<div class="source"><label><input type="checkbox"> GitHub / code</label></div>
+<div class="source"><label><input type="checkbox"> Work apps</label></div>
+</div>
 </section>
 
-<footer>
-  AI Work Passport
-</footer>
+<section class="panel">
+<div class="row"><div><h2 style="margin:0 0 6px">Private Review Queue</h2><div class="muted">Nothing enters your Passport until you review it.</div></div>
+<button class="secondary" onclick="simulateWork()">Simulate New Work</button></div>
+<div id="queue"><div class="item" id="sample">
+<h3>Prepared client project brief</h3>
+<div class="meta">Source: Project activity · Captured: Oct 7, 2026 · Status: Private / Unreviewed</div>
+<div class="actions">
+<button class="primary" onclick="approve(this,'Prepared client project brief','Project activity')">Approve</button>
+<button class="verify" onclick="requestVerify(this)">Request Verification</button>
+<button class="danger" onclick="reject(this)">Reject</button>
+</div></div></div>
+</section>
 
+<section class="panel">
+<h2 style="margin-top:0">Passport Timeline</h2>
+<p class="muted">Approved evidence appears here with its source, date, and verification status preserved.</p>
+<div id="timeline" class="timeline"><div class="empty" id="timelineEmpty">No approved evidence yet.</div></div>
+</section>
+
+<section class="four">
+<div class="concept"><h3>Evidence</h3><p>Proof tied to actual work and accomplishments.</p></div>
+<div class="concept"><h3>Verification</h3><p>Records can be reviewed and confirmed rather than merely claimed.</p></div>
+<div class="concept"><h3>Provenance</h3><p>Preserve where evidence came from and when it was captured.</p></div>
+<div class="concept"><h3>Portable Passport</h3><p>A work history the individual controls and can carry forward.</p></div>
+</section>
+</main>
+<footer>AI Work Passport · Prototype — real capture integrations require a secure backend, authentication, permissions, and source connectors.</footer>
+
+<script>
+let capturing=false, n=1;
+function toggleCapture(){
+ capturing=!capturing;
+ const b=document.getElementById('captureBtn'), s=document.getElementById('captureStatus');
+ b.textContent=capturing?'Stop Capture':'Start Capture';
+ b.className=capturing?'danger':'primary';
+ s.textContent=capturing?'Capture is ON — prototype simulation only':'Capture is OFF';
+}
+function simulateWork(){
+ if(!capturing){alert('Start Capture first. This prototype will then simulate a new work event.');return;}
+ n++;
+ const q=document.getElementById('queue');
+ const d=document.createElement('div'); d.className='item';
+ d.innerHTML='<h3>Captured work item '+n+'</h3><div class="meta">Source: Project activity · Captured: Oct 7, 2026 · Status: Private / Unreviewed</div><div class="actions"><button class="primary" onclick="approve(this,\'Captured work item '+n+'\',\'Project activity\')">Approve</button><button class="verify" onclick="requestVerify(this)">Request Verification</button><button class="danger" onclick="reject(this)">Reject</button></div>';
+ q.appendChild(d);
+}
+function approve(btn,title,source){
+ const item=btn.closest('.item'); const empty=document.getElementById('timelineEmpty'); if(empty) empty.remove();
+ const e=document.createElement('div'); e.className='event';
+ e.innerHTML='<strong>'+title+'</strong><div class="meta">Source: '+source+' · Added Oct 7, 2026</div><div class="verified">Approved by passport owner · Verification pending</div>';
+ document.getElementById('timeline').appendChild(e); item.remove();
+}
+function requestVerify(btn){
+ const item=btn.closest('.item'); const meta=item.querySelector('.meta');
+ if(!meta.textContent.includes('Verification requested')) meta.textContent += ' · Verification requested';
+ btn.textContent='Verification Requested'; btn.disabled=true;
+}
+function reject(btn){btn.closest('.item').remove();}
+</script>
 </body>
 </html>
