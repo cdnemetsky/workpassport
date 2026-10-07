@@ -143,6 +143,23 @@ input,textarea,select{border-radius:12px;padding:12px 13px}
 .info{border-radius:18px}
 @media(max-width:560px){.heroInner{padding-top:48px;padding-bottom:50px}.passportTop{padding:25px 20px}.avatar{width:70px;height:70px}.passportIdentity h2{font-size:23px}.passportTop:after,.passportTop:before{display:none}}
 
+
+/* Graphical credential layer */
+.credentialEmblem{width:128px;height:128px;margin:0 auto 20px;border-radius:50%;display:grid;place-items:center;position:relative;background:radial-gradient(circle,#17376f 0 47%,#d5b76f 48% 51%,#102755 52% 68%,#d5b76f 69% 72%,transparent 73%);filter:drop-shadow(0 18px 25px rgba(0,0,0,.2))}
+.credentialEmblem:before{content:"AI";font-size:32px;font-weight:950;letter-spacing:-2px;color:#fff}
+.credentialEmblem:after{content:"✓";position:absolute;right:6px;bottom:11px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#d8bb73;color:#102755;border:4px solid #102755;font-weight:950}
+.trustcard{text-align:center}
+.trustcard .trustline{text-align:left}
+.securityStrip{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;margin-top:18px;padding:14px 16px;border:1px solid #d8e0ee;border-radius:15px;background:linear-gradient(90deg,#f8faff,#eef3fc)}
+.securityCode{width:72px;height:72px;border:7px solid #102755;background:repeating-linear-gradient(45deg,#102755 0 5px,#fff 5px 10px);box-shadow:inset 0 0 0 5px #fff}
+.securityTitle{font-weight:900;color:#132d60}.securityMeta{font-size:11px;color:#6c7890;margin-top:4px;letter-spacing:.06em;text-transform:uppercase}
+.passportSeal{position:absolute;right:25px;top:60px;width:92px;height:92px;border:2px solid rgba(216,187,115,.65);border-radius:50%;display:grid;place-items:center;color:#e0c680;font-size:10px;font-weight:900;letter-spacing:.12em;text-align:center;transform:rotate(-8deg);box-shadow:inset 0 0 0 6px rgba(216,187,115,.08)}
+.visualSteps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
+.visualStep{position:relative;padding:16px 12px;border-radius:16px;background:#f7f9fd;border:1px solid #e1e7f1;text-align:center}
+.visualStep .ico{width:42px;height:42px;margin:0 auto 9px;border-radius:13px;display:grid;place-items:center;background:#e8efff;color:#244eac;font-size:19px;font-weight:900}
+.visualStep b{display:block;font-size:12px}.visualStep span{font-size:10px;color:#7a8599}
+@media(max-width:700px){.visualSteps{grid-template-columns:1fr 1fr}.passportSeal{display:none}.securityCode{width:58px;height:58px}}
+
 </style>
 </head>
 <body>
@@ -170,7 +187,7 @@ input,textarea,select{border-radius:12px;padding:12px 13px}
         <button class="btn secondary" onclick="go('passportPanel')">View Passport</button>
       </div>
     </div>
-    <div class="trustcard">
+    <div class="trustcard"><div class="credentialEmblem" aria-hidden="true"></div>
       <div class="trustline"><strong>Evidence first</strong><span>Claims need proof</span></div>
       <div class="trustline"><strong>Private review</strong><span>You approve what enters</span></div>
       <div class="trustline"><strong>Verified only</strong><span>Official record stays trusted</span></div>
@@ -221,6 +238,8 @@ input,textarea,select{border-radius:12px;padding:12px 13px}
       </div>
     </div>
 
+    <div class="visualSteps"><div class="visualStep"><div class="ico">1</div><b>Capture</b><span>Work source</span></div><div class="visualStep"><div class="ico">2</div><b>Evidence</b><span>Proof retained</span></div><div class="visualStep"><div class="ico">3</div><b>Verify</b><span>Trust check</span></div><div class="visualStep"><div class="ico">✓</div><b>Passport</b><span>Official record</span></div></div>
+
     <div class="notice" style="margin-bottom:14px">
       <strong>First real connector:</strong> this version can read public GitHub commit activity directly from GitHub. It does not read private repositories, your computer, or other accounts. Automatic checking runs only while this page is open and Capture is ON.
     </div>
@@ -257,7 +276,7 @@ input,textarea,select{border-radius:12px;padding:12px 13px}
 
     <div class="passportCard">
       <div class="passportTop">
-        <div class="passportIdentity">
+        <div class="passportSeal">AUTHENTICATED<br>WORK RECORD</div><div class="passportIdentity">
           <div class="avatar" id="avatar">WP</div>
           <div>
             <h2 id="profileName">Work Passport Holder</h2>
@@ -273,7 +292,7 @@ input,textarea,select{border-radius:12px;padding:12px 13px}
           <div class="fact"><b id="factUpdated">—</b><span>Latest verified work</span></div>
         </div>
         <h3 style="margin:20px 0 8px">Demonstrated skills</h3>
-        <div class="skills" id="skillsList"><span class="small" style="color:var(--muted)">Skills will appear as verified work is added.</span></div>
+        <div class="skills" id="skillsList"><span class="small" style="color:var(--muted)">Skills will appear as verified work is added.</span></div><div class="securityStrip"><div><div class="securityTitle">Verification-ready credential</div><div class="securityMeta">Evidence trail · source provenance · protected record</div></div><div class="securityCode" aria-label="credential security mark"></div></div>
       </div>
     </div>
   </section>
