@@ -3,112 +3,377 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0b1733">
 <title>AI Work Passport</title>
 <style>
-:root{--ink:#14213d;--blue:#2457d6;--bg:#f4f7fb;--line:#dfe6f1;--good:#176b46;--warn:#8a5a00}
-*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
-header{background:#101b35;color:white;padding:22px 6%;display:flex;justify-content:space-between;align-items:center}
-.brand{font-weight:800;font-size:21px}.badge{font-size:12px;background:#263657;padding:7px 10px;border-radius:20px}
-.hero{padding:64px 6% 42px;background:white;text-align:center}.hero h1{font-size:44px;margin:0 0 12px}.hero p{max-width:760px;margin:auto;font-size:19px;line-height:1.55;color:#4c5870}
-.wrap{max-width:1100px;margin:auto;padding:34px 24px}.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:22px;box-shadow:0 8px 24px rgba(20,33,61,.05)}
-.row{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}.muted{color:#657087}.status{font-weight:700}
-button{border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#edf2ff;color:var(--blue)}.danger{background:#fff0f0;color:#a52a2a}.verify{background:#fff5dd;color:var(--warn)}
-.sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:16px}.source{border:1px solid var(--line);border-radius:12px;padding:14px}.source label{display:flex;gap:9px;align-items:center}
-.item{border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:12px}.item h3{margin:0 0 7px;font-size:17px}.meta{font-size:13px;color:#6c778b;margin-bottom:12px}.actions{display:flex;gap:8px;flex-wrap:wrap}
-.timeline{border-left:3px solid #cdd9f5;margin-left:8px;padding-left:22px}.event{margin:0 0 20px;position:relative}.event:before{content:"";width:11px;height:11px;background:var(--blue);border-radius:50%;position:absolute;left:-29px;top:4px}.verified{color:var(--good);font-weight:700;font-size:13px}
-.four{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}.concept{background:white;border:1px solid var(--line);padding:18px;border-radius:13px}.concept h3{margin-top:0}
-.notice{background:#eef7f2;border:1px solid #cde6d8;padding:13px;border-radius:10px;color:#245a42;font-size:14px}.empty{color:#7b8598;font-style:italic;padding:8px 0}
-footer{text-align:center;padding:28px;color:#6c778b}
-.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}
-input,textarea,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:inherit;color:var(--ink);background:#fff}textarea{min-height:88px;resize:vertical}
-label{font-size:13px;font-weight:700}.proof{background:#f7f9fd;border:1px solid var(--line);border-radius:10px;padding:11px;margin:10px 0;font-size:13px;color:#56627a}.pill{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:700;background:#eef2f7;color:#526078}.pill.good{background:#eaf7f0;color:var(--good)}
-@media(max-width:600px){.hero h1{font-size:34px}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+:root{
+  --navy:#0b1733;--navy2:#15264d;--blue:#2f63e9;--blue2:#eaf0ff;--ink:#16213a;
+  --muted:#667189;--bg:#f4f7fb;--card:#fff;--line:#dfe5ef;--good:#16724b;--goodbg:#eaf7f0;
+  --warn:#8a5b00;--warnbg:#fff5dc;--bad:#a33b3b;--badbg:#fff0f0;--shadow:0 12px 35px rgba(21,38,77,.08)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.topbar{position:sticky;top:0;z-index:30;background:rgba(11,23,51,.97);color:#fff;border-bottom:1px solid rgba(255,255,255,.08)}
+.topinner{max-width:1180px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:15px 22px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:850;letter-spacing:-.2px}
+.logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#6e91ff,#2f63e9);display:grid;place-items:center;font-weight:900}
+.nav{display:flex;gap:7px;flex-wrap:wrap}
+.nav button{border:0;background:transparent;color:#d8e1f6;padding:8px 10px;border-radius:8px}
+.nav button:hover{background:#20335f;color:white}
+.hero{background:linear-gradient(135deg,#0b1733 0%,#142a5a 70%,#1e438d 100%);color:#fff}
+.heroInner{max-width:1180px;margin:auto;padding:58px 22px 50px;display:grid;grid-template-columns:1.35fr .65fr;gap:28px;align-items:center}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#abc1ff;font-weight:800}
+.hero h1{font-size:50px;line-height:1.05;margin:10px 0 16px;letter-spacing:-1.5px}
+.hero p{font-size:19px;line-height:1.6;color:#d9e2f7;max-width:730px;margin:0}
+.trustcard{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.17);border-radius:18px;padding:22px;backdrop-filter:blur(8px)}
+.trustline{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.13);font-size:14px}
+.trustline:last-child{border-bottom:0}
+.trustline strong{color:#fff}.trustline span{color:#c7d5f5}
+.wrap{max-width:1180px;margin:auto;padding:28px 22px 60px}
+.gridStats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:-18px;position:relative;z-index:2}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:18px;box-shadow:var(--shadow)}
+.stat .n{font-size:28px;font-weight:850;margin-bottom:4px}.stat .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:800}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:23px;margin-top:20px;box-shadow:var(--shadow)}
+.panelHead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.panel h2{margin:0;font-size:22px}.panel p{color:var(--muted);line-height:1.55}
+.kicker{font-size:12px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:800}
+.primary{background:var(--blue);color:#fff}.primary:hover{filter:brightness(.96)}
+.secondary{background:var(--blue2);color:#2d58c7}
+.ghost{background:#f2f4f8;color:#4e5a72}
+.verify{background:var(--warnbg);color:var(--warn)}
+.danger{background:var(--badbg);color:var(--bad)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.field{display:flex;flex-direction:column;gap:6px}.full{grid-column:1/-1}
+label{font-size:12px;color:#44506a;font-weight:800}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;color:var(--ink);background:#fff;outline:none}
+input:focus,textarea:focus,select:focus{border-color:#89a7f7;box-shadow:0 0 0 3px rgba(47,99,233,.09)}
+textarea{min-height:92px;resize:vertical}
+.notice{background:#eef7f3;border:1px solid #cfe8dc;color:#295e48;border-radius:11px;padding:12px 14px;font-size:13px;line-height:1.45}
+.queueItem,.timelineItem{border:1px solid var(--line);border-radius:14px;padding:17px;margin-top:12px;background:#fff}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.meta{color:var(--muted);font-size:12px;margin-top:5px}
+.proof{background:#f7f9fc;border:1px solid #e5e9f1;border-radius:10px;padding:11px 12px;margin:11px 0;color:#536078;font-size:13px;line-height:1.5}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:800;background:#eef1f6;color:#58647a}
+.pill.good{background:var(--goodbg);color:var(--good)}
+.pill.warn{background:var(--warnbg);color:var(--warn)}
+.empty{padding:22px;text-align:center;color:#7c879d;border:1px dashed #cfd6e2;border-radius:12px;background:#fafbfd}
+.timeline{position:relative;margin-left:8px;padding-left:22px}
+.timeline:before{content:"";position:absolute;left:4px;top:7px;bottom:8px;width:3px;background:#dbe4fb;border-radius:3px}
+.timelineItem{position:relative}
+.timelineItem:before{content:"";position:absolute;left:-26px;top:21px;width:11px;height:11px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 4px #edf2ff}
+.passportCard{border-radius:20px;overflow:hidden;border:1px solid #cfd8eb;background:#fff}
+.passportTop{background:linear-gradient(135deg,#142a5a,#0b1733);color:#fff;padding:24px}
+.passportIdentity{display:flex;gap:17px;align-items:center}
+.avatar{width:72px;height:72px;border-radius:16px;background:linear-gradient(135deg,#e6ebf7,#b7c6eb);display:grid;place-items:center;color:#29477f;font-size:25px;font-weight:900;border:2px solid rgba(255,255,255,.35)}
+.passportIdentity h2{margin:0 0 5px;font-size:25px}.passportIdentity p{margin:0;color:#cbd7f2;font-size:13px}
+.passportBody{padding:20px}
+.passportFacts{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.fact{border:1px solid var(--line);border-radius:11px;padding:12px}.fact b{display:block;font-size:18px}.fact span{font-size:11px;color:var(--muted)}
+.skills{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.skill{background:#eef3ff;color:#335bc0;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:750}
+.twoCol{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.infoCards{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:20px}
+.info{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px}
+.info h3{margin:0 0 7px;font-size:15px}.info p{font-size:13px;margin:0;color:var(--muted);line-height:1.5}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.search{max-width:280px}
+.small{font-size:12px}
+footer{max-width:1180px;margin:auto;padding:0 22px 35px;color:#7b869b;font-size:12px;text-align:center}
+.toast{position:fixed;right:20px;bottom:20px;background:#14213d;color:#fff;padding:12px 15px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.18);opacity:0;transform:translateY(12px);pointer-events:none;transition:.2s;z-index:50}
+.toast.show{opacity:1;transform:none}
+@media(max-width:850px){
+  .heroInner{grid-template-columns:1fr}.trustcard{display:none}.hero h1{font-size:40px}
+  .gridStats{grid-template-columns:repeat(2,1fr)}.twoCol{grid-template-columns:1fr}.infoCards{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:560px){
+  .nav{display:none}.topinner{padding:13px 16px}.heroInner{padding:43px 17px 40px}.hero h1{font-size:35px}
+  .wrap{padding:22px 15px 45px}.gridStats{grid-template-columns:1fr 1fr;gap:10px}.stat{padding:14px}.stat .n{font-size:22px}
+  .panel{padding:17px}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.passportFacts{grid-template-columns:1fr 1fr}.infoCards{grid-template-columns:1fr}
+}
+@media print{
+  .topbar,.hero,.gridStats,#addPanel,#reviewPanel,.toolbar,.infoCards,footer,.toast{display:none!important}
+  body{background:#fff}.wrap{max-width:none;padding:0}.panel{box-shadow:none;border:0;margin:0;padding:0}
+  #passportPanel{display:block}.passportCard{border:1px solid #aaa}
+}
 </style>
 </head>
 <body>
-<header><div class="brand">AI Work Passport</div><div class="badge">Interactive Prototype</div></header>
+<div class="topbar">
+  <div class="topinner">
+    <div class="brand"><div class="logo">WP</div><span>AI Work Passport</span></div>
+    <div class="nav">
+      <button onclick="go('passportPanel')">Passport</button>
+      <button onclick="go('addPanel')">Add Evidence</button>
+      <button onclick="go('reviewPanel')">Review</button>
+      <button onclick="go('timelinePanel')">Timeline</button>
+    </div>
+  </div>
+</div>
+
 <section class="hero">
-<h1>Your Work. Your Proof. Your Passport.</h1>
-<p>A trusted, portable record built from evidence of real work—with provenance, user control, and verification.</p>
+  <div class="heroInner">
+    <div>
+      <div class="eyebrow">Verified work record</div>
+      <h1>Your work. Your proof. Your passport.</h1>
+      <p>A portable work record built around evidence. Claims stay private until reviewed, and only verified evidence belongs in the official Passport.</p>
+      <div class="actions" style="margin-top:22px">
+        <button class="btn primary" onclick="go('addPanel')">Add Work Evidence</button>
+        <button class="btn secondary" onclick="go('passportPanel')">View Passport</button>
+      </div>
+    </div>
+    <div class="trustcard">
+      <div class="trustline"><strong>Evidence first</strong><span>Claims need proof</span></div>
+      <div class="trustline"><strong>Private review</strong><span>You approve what enters</span></div>
+      <div class="trustline"><strong>Verified only</strong><span>Official record stays trusted</span></div>
+      <div class="trustline"><strong>Portable</strong><span>Carry your record forward</span></div>
+    </div>
+  </div>
 </section>
 
 <main class="wrap">
-<section class="panel">
-<div><h2 style="margin:0 0 6px">Add Work Evidence</h2><div class="muted">Record an accomplishment together with the source that can support it. New entries stay private until reviewed.</div></div>
-<form id="evidenceForm" onsubmit="addEvidence(event)">
-<div class="formgrid">
-<div class="field full"><label for="workTitle">Accomplishment</label><input id="workTitle" required placeholder="Example: Completed client project brief"></div>
-<div class="field"><label for="workSource">Evidence source</label><select id="workSource"><option>Project activity</option><option>Document</option><option>GitHub / code</option><option>Work app</option><option>Other source</option></select></div>
-<div class="field"><label for="workDate">Work date</label><input id="workDate" type="date" required></div>
-<div class="field full"><label for="workProof">Proof or source details</label><textarea id="workProof" required placeholder="Describe the evidence, file, link, record, or source that can be checked."></textarea></div>
-</div>
-<div class="actions" style="margin-top:14px"><button type="submit" class="primary">Add to Private Review</button><button type="reset" class="secondary">Clear</button></div>
-</form>
-<div class="notice" style="margin-top:16px">Prototype note: this page demonstrates the evidence and verification workflow. It does not yet connect to external accounts or independently validate evidence.</div>
-</section>
+  <section class="gridStats">
+    <div class="stat"><div class="n" id="statVerified">0</div><div class="l">Verified records</div></div>
+    <div class="stat"><div class="n" id="statPending">0</div><div class="l">Pending review</div></div>
+    <div class="stat"><div class="n" id="statSources">0</div><div class="l">Evidence sources</div></div>
+    <div class="stat"><div class="n" id="statSkills">0</div><div class="l">Skills shown</div></div>
+  </section>
 
-<section class="panel">
-<div><h2 style="margin:0 0 6px">Private Review Queue</h2><div class="muted">Nothing enters the official Passport until it is reviewed and marked verified.</div></div>
-<div id="queue"><div class="empty" id="queueEmpty">No evidence waiting for review.</div></div>
-</section>
+  <section class="panel" id="passportPanel">
+    <div class="panelHead">
+      <div><div class="kicker">Official view</div><h2>Work Passport</h2><p>Only verified work appears in this record.</p></div>
+      <div class="toolbar">
+        <button class="btn ghost" onclick="editProfile()">Edit Profile</button>
+        <button class="btn secondary" onclick="window.print()">Print / Save PDF</button>
+        <button class="btn primary" onclick="copyPassportSummary()">Copy Summary</button>
+      </div>
+    </div>
 
-<section class="panel">
-<h2 style="margin-top:0">Passport Timeline</h2>
-<p class="muted">Only evidence you mark verified can be added here. The source, date, and proof stay attached to the record.</p>
-<div id="timeline" class="timeline"><div class="empty" id="timelineEmpty">No approved evidence yet.</div></div>
-</section>
+    <div class="passportCard">
+      <div class="passportTop">
+        <div class="passportIdentity">
+          <div class="avatar" id="avatar">WP</div>
+          <div>
+            <h2 id="profileName">Work Passport Holder</h2>
+            <p id="profileHeadline">Verified record of work and demonstrated capability</p>
+            <div style="margin-top:10px"><span class="pill good">Verified-only Passport</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="passportBody">
+        <div class="passportFacts">
+          <div class="fact"><b id="factRecords">0</b><span>Verified work records</span></div>
+          <div class="fact"><b id="factSources">0</b><span>Distinct evidence sources</span></div>
+          <div class="fact"><b id="factUpdated">—</b><span>Latest verified work</span></div>
+        </div>
+        <h3 style="margin:20px 0 8px">Demonstrated skills</h3>
+        <div class="skills" id="skillsList"><span class="small" style="color:var(--muted)">Skills will appear as verified work is added.</span></div>
+      </div>
+    </div>
+  </section>
 
-<section class="four">
-<div class="concept"><h3>Evidence</h3><p>Proof tied to actual work and accomplishments.</p></div>
-<div class="concept"><h3>Verification</h3><p>Records can be reviewed and confirmed rather than merely claimed.</p></div>
-<div class="concept"><h3>Provenance</h3><p>Preserve where evidence came from and when it was captured.</p></div>
-<div class="concept"><h3>Portable Passport</h3><p>A work history the individual controls and can carry forward.</p></div>
-</section>
+  <section class="panel" id="addPanel">
+    <div class="panelHead">
+      <div><div class="kicker">Step 1</div><h2>Add work evidence</h2><p>Record the accomplishment and the proof that can support it.</p></div>
+    </div>
+    <form id="evidenceForm" onsubmit="addEvidence(event)">
+      <div class="formgrid">
+        <div class="field full"><label for="workTitle">Accomplishment</label><input id="workTitle" required placeholder="Example: Completed client project brief"></div>
+        <div class="field"><label for="workSource">Evidence source</label>
+          <select id="workSource">
+            <option>Project activity</option><option>Document</option><option>GitHub / code</option><option>Work app</option><option>Manager or client confirmation</option><option>Other source</option>
+          </select>
+        </div>
+        <div class="field"><label for="workDate">Work date</label><input id="workDate" type="date" required></div>
+        <div class="field full"><label for="workProof">Proof or source details</label><textarea id="workProof" required placeholder="Describe the evidence, file, record, link, or source that can be checked."></textarea></div>
+        <div class="field full"><label for="workSkills">Skills demonstrated</label><input id="workSkills" placeholder="Example: Project planning, writing, client communication"></div>
+      </div>
+      <div class="actions" style="margin-top:14px">
+        <button class="btn primary" type="submit">Add to Private Review</button>
+        <button class="btn ghost" type="reset">Clear</button>
+      </div>
+    </form>
+    <div class="notice" style="margin-top:16px">Prototype: records are stored in this browser for demonstration. A production version would require secure sign-in, protected storage, source connections, and independent verification methods.</div>
+  </section>
+
+  <section class="panel" id="reviewPanel">
+    <div class="panelHead">
+      <div><div class="kicker">Step 2</div><h2>Private review queue</h2><p>Review the evidence. Nothing enters the official Passport until it is verified.</p></div>
+      <button class="btn ghost" onclick="addDemoItem()">Add Demo Item</button>
+    </div>
+    <div id="queue"></div>
+  </section>
+
+  <section class="panel" id="timelinePanel">
+    <div class="panelHead">
+      <div><div class="kicker">Step 3</div><h2>Verified timeline</h2><p>Your official record keeps the work, date, source, proof, and skills together.</p></div>
+      <div class="toolbar">
+        <input class="search" id="timelineSearch" placeholder="Search verified work" oninput="renderTimeline()">
+        <select id="sourceFilter" onchange="renderTimeline()"><option value="">All sources</option></select>
+      </div>
+    </div>
+    <div id="timeline" class="timeline"></div>
+  </section>
+
+  <section class="twoCol">
+    <section class="panel">
+      <div class="kicker">Trust model</div>
+      <h2>What “verified” means here</h2>
+      <p>This prototype demonstrates the workflow. In the real product, a record should become official only after the evidence is authenticated by an approved verification method.</p>
+      <div class="notice">Core rule: if it is in the official Work Passport, it is verified.</div>
+    </section>
+    <section class="panel">
+      <div class="kicker">Control</div>
+      <h2>You decide what becomes part of the Passport</h2>
+      <p>Evidence can stay private, be rejected, or be verified and added. The Passport is meant to be portable without turning unverified statements into official credentials.</p>
+    </section>
+  </section>
+
+  <section class="infoCards">
+    <div class="info"><h3>Evidence</h3><p>Work records are tied to proof instead of standing as unsupported claims.</p></div>
+    <div class="info"><h3>Verification</h3><p>Only authenticated evidence should become part of the official Passport.</p></div>
+    <div class="info"><h3>Provenance</h3><p>The record preserves where evidence came from and when the work occurred.</p></div>
+    <div class="info"><h3>Portability</h3><p>The holder can carry a trusted work history forward and present it when useful.</p></div>
+  </section>
 </main>
-<footer>AI Work Passport · Prototype — real capture integrations require a secure backend, authentication, permissions, and source connectors.</footer>
+
+<footer>AI Work Passport · Interactive prototype · Verified evidence is the foundation of the official record.</footer>
+<div class="toast" id="toast"></div>
 
 <script>
-function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+const KEY='aiWorkPassport_v3';
+let state={
+  profile:{name:'Work Passport Holder',headline:'Verified record of work and demonstrated capability'},
+  pending:[],
+  verified:[]
+};
+function save(){localStorage.setItem(KEY,JSON.stringify(state));renderAll()}
+function load(){
+  try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&x.profile&&Array.isArray(x.pending)&&Array.isArray(x.verified))state=x}catch(e){}
+}
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function niceDate(s){if(!s)return '—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})}
+function skillsFrom(s){return String(s||'').split(',').map(x=>x.trim()).filter(Boolean)}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'})}
+
 function addEvidence(e){
- e.preventDefault();
- const title=document.getElementById('workTitle').value.trim();
- const source=document.getElementById('workSource').value;
- const date=document.getElementById('workDate').value;
- const proof=document.getElementById('workProof').value.trim();
- const empty=document.getElementById('queueEmpty'); if(empty) empty.remove();
- const d=document.createElement('div'); d.className='item';
- d.dataset.title=title; d.dataset.source=source; d.dataset.date=date; d.dataset.proof=proof; d.dataset.verified='no';
- d.innerHTML='<div class="row"><h3>'+esc(title)+'</h3><span class="pill">Private / Unverified</span></div>'+
- '<div class="meta">Source: '+esc(source)+' · Work date: '+esc(date)+'</div>'+
- '<div class="proof"><strong>Evidence:</strong> '+esc(proof)+'</div>'+
- '<div class="actions"><button class="verify" onclick="markVerified(this)">Mark Verified</button><button class="primary" onclick="addToPassport(this)" disabled>Add to Passport</button><button class="danger" onclick="reject(this)">Reject</button></div>';
- document.getElementById('queue').appendChild(d);
- e.target.reset();
+  e.preventDefault();
+  const item={
+    id:uid(),
+    title:document.getElementById('workTitle').value.trim(),
+    source:document.getElementById('workSource').value,
+    date:document.getElementById('workDate').value,
+    proof:document.getElementById('workProof').value.trim(),
+    skills:skillsFrom(document.getElementById('workSkills').value),
+    verified:false,
+    added:new Date().toISOString()
+  };
+  state.pending.unshift(item);
+  e.target.reset();
+  document.getElementById('workDate').value=new Date().toISOString().slice(0,10);
+  save();toast('Added to private review');go('reviewPanel');
 }
-function markVerified(btn){
- const item=btn.closest('.item'); item.dataset.verified='yes';
- const pill=item.querySelector('.pill'); pill.textContent='Verified'; pill.className='pill good';
- btn.textContent='Verified'; btn.disabled=true;
- item.querySelector('.primary').disabled=false;
+function addDemoItem(){
+  state.pending.unshift({
+    id:uid(),title:'Prepared client project brief',source:'Project activity',date:new Date().toISOString().slice(0,10),
+    proof:'Project record showing the completed brief, creation date, and final submitted version.',
+    skills:['Project planning','Writing','Client communication'],verified:false,added:new Date().toISOString()
+  });
+  save();toast('Demo evidence added');
 }
-function addToPassport(btn){
- const item=btn.closest('.item');
- if(item.dataset.verified!=='yes') return;
- const empty=document.getElementById('timelineEmpty'); if(empty) empty.remove();
- const e=document.createElement('div'); e.className='event';
- e.innerHTML='<strong>'+esc(item.dataset.title)+'</strong>'+
- '<div class="meta">Source: '+esc(item.dataset.source)+' · Work date: '+esc(item.dataset.date)+'</div>'+
- '<div class="proof"><strong>Evidence:</strong> '+esc(item.dataset.proof)+'</div>'+
- '<div class="verified">Verified evidence · Added to Passport</div>';
- document.getElementById('timeline').appendChild(e);
- item.remove(); ensureQueueEmpty();
+function markVerified(id){
+  const x=state.pending.find(i=>i.id===id);if(!x)return;x.verified=true;save();toast('Evidence marked verified');
 }
-function reject(btn){btn.closest('.item').remove();ensureQueueEmpty();}
-function ensureQueueEmpty(){
- const q=document.getElementById('queue');
- if(!q.querySelector('.item')) q.innerHTML='<div class="empty" id="queueEmpty">No evidence waiting for review.</div>';
+function addToPassport(id){
+  const i=state.pending.findIndex(x=>x.id===id);if(i<0||!state.pending[i].verified)return;
+  const x=state.pending.splice(i,1)[0];x.officialAt=new Date().toISOString();state.verified.unshift(x);save();toast('Added to official Passport');
 }
-document.getElementById('workDate').value='2026-10-07';
+function removePending(id){state.pending=state.pending.filter(x=>x.id!==id);save();toast('Evidence removed')}
+function removeVerified(id){
+  if(!confirm('Remove this record from the official Passport?'))return;
+  state.verified=state.verified.filter(x=>x.id!==id);save();toast('Record removed from Passport')
+}
+function renderQueue(){
+  const q=document.getElementById('queue');
+  if(!state.pending.length){q.innerHTML='<div class="empty">No evidence waiting for review.</div>';return}
+  q.innerHTML=state.pending.map(x=>`
+    <div class="queueItem">
+      <div class="row">
+        <div><strong>${esc(x.title)}</strong><div class="meta">${esc(x.source)} · ${niceDate(x.date)}</div></div>
+        <span class="pill ${x.verified?'good':'warn'}">${x.verified?'Verified':'Private / Unverified'}</span>
+      </div>
+      <div class="proof"><strong>Evidence:</strong> ${esc(x.proof)}</div>
+      ${x.skills.length?'<div class="skills">'+x.skills.map(s=>'<span class="skill">'+esc(s)+'</span>').join('')+'</div>':''}
+      <div class="actions" style="margin-top:13px">
+        <button class="btn verify" onclick="markVerified('${x.id}')" ${x.verified?'disabled':''}>${x.verified?'Verified':'Mark Verified'}</button>
+        <button class="btn primary" onclick="addToPassport('${x.id}')" ${x.verified?'':'disabled'}>Add to Passport</button>
+        <button class="btn danger" onclick="removePending('${x.id}')">Reject</button>
+      </div>
+    </div>`).join('');
+}
+function renderTimeline(){
+  const root=document.getElementById('timeline');
+  const search=(document.getElementById('timelineSearch')?.value||'').toLowerCase();
+  const source=document.getElementById('sourceFilter')?.value||'';
+  const list=state.verified.filter(x=>{
+    const hay=[x.title,x.source,x.proof,(x.skills||[]).join(' ')].join(' ').toLowerCase();
+    return (!search||hay.includes(search))&&(!source||x.source===source);
+  });
+  if(!list.length){root.innerHTML='<div class="empty">No verified work matches this view.</div>';return}
+  root.innerHTML=list.map(x=>`
+    <div class="timelineItem">
+      <div class="row">
+        <div><strong>${esc(x.title)}</strong><div class="meta">${esc(x.source)} · ${niceDate(x.date)}</div></div>
+        <span class="pill good">Verified</span>
+      </div>
+      <div class="proof"><strong>Evidence:</strong> ${esc(x.proof)}</div>
+      ${x.skills?.length?'<div class="skills">'+x.skills.map(s=>'<span class="skill">'+esc(s)+'</span>').join('')+'</div>':''}
+      <div class="actions" style="margin-top:12px"><button class="btn ghost" onclick="removeVerified('${x.id}')">Remove from Passport</button></div>
+    </div>`).join('');
+}
+function renderFilters(){
+  const sel=document.getElementById('sourceFilter');const keep=sel.value;
+  const sources=[...new Set(state.verified.map(x=>x.source))].sort();
+  sel.innerHTML='<option value="">All sources</option>'+sources.map(s=>'<option>'+esc(s)+'</option>').join('');
+  if(sources.includes(keep))sel.value=keep;
+}
+function renderProfile(){
+  document.getElementById('profileName').textContent=state.profile.name;
+  document.getElementById('profileHeadline').textContent=state.profile.headline;
+  const parts=state.profile.name.trim().split(/\s+/).filter(Boolean);
+  document.getElementById('avatar').textContent=parts.length?((parts[0][0]||'')+(parts.length>1?parts[parts.length-1][0]:'')).toUpperCase():'WP';
+  const skills=[...new Set(state.verified.flatMap(x=>x.skills||[]))];
+  const sources=[...new Set(state.verified.map(x=>x.source))];
+  document.getElementById('skillsList').innerHTML=skills.length?skills.map(s=>'<span class="skill">'+esc(s)+'</span>').join(''):'<span class="small" style="color:var(--muted)">Skills will appear as verified work is added.</span>';
+  document.getElementById('factRecords').textContent=state.verified.length;
+  document.getElementById('factSources').textContent=sources.length;
+  const dates=state.verified.map(x=>x.date).filter(Boolean).sort().reverse();
+  document.getElementById('factUpdated').textContent=dates.length?niceDate(dates[0]):'—';
+  document.getElementById('statVerified').textContent=state.verified.length;
+  document.getElementById('statPending').textContent=state.pending.length;
+  document.getElementById('statSources').textContent=sources.length;
+  document.getElementById('statSkills').textContent=skills.length;
+}
+function editProfile(){
+  const name=prompt('Passport holder name:',state.profile.name);if(name===null)return;
+  const headline=prompt('Professional headline:',state.profile.headline);if(headline===null)return;
+  state.profile.name=name.trim()||'Work Passport Holder';state.profile.headline=headline.trim()||'Verified record of work and demonstrated capability';save();
+}
+function copyPassportSummary(){
+  const lines=[state.profile.name,state.profile.headline,'',`Verified records: ${state.verified.length}`];
+  state.verified.forEach(x=>lines.push(`• ${x.title} — ${x.source}, ${niceDate(x.date)}`));
+  navigator.clipboard?.writeText(lines.join('\n')).then(()=>toast('Passport summary copied')).catch(()=>toast('Copy is not available in this browser'));
+}
+function renderAll(){renderProfile();renderQueue();renderFilters();renderTimeline()}
+load();
+document.getElementById('workDate').value=new Date().toISOString().slice(0,10);
+renderAll();
 </script>
 </body>
 </html>
