@@ -19,7 +19,10 @@ button{border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:poin
 .four{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}.concept{background:white;border:1px solid var(--line);padding:18px;border-radius:13px}.concept h3{margin-top:0}
 .notice{background:#eef7f2;border:1px solid #cde6d8;padding:13px;border-radius:10px;color:#245a42;font-size:14px}.empty{color:#7b8598;font-style:italic;padding:8px 0}
 footer{text-align:center;padding:28px;color:#6c778b}
-@media(max-width:600px){.hero h1{font-size:34px}}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:inherit;color:var(--ink);background:#fff}textarea{min-height:88px;resize:vertical}
+label{font-size:13px;font-weight:700}.proof{background:#f7f9fd;border:1px solid var(--line);border-radius:10px;padding:11px;margin:10px 0;font-size:13px;color:#56627a}.pill{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:700;background:#eef2f7;color:#526078}.pill.good{background:#eaf7f0;color:var(--good)}
+@media(max-width:600px){.hero h1{font-size:34px}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}}
 </style>
 </head>
 <body>
@@ -31,36 +34,27 @@ footer{text-align:center;padding:28px;color:#6c778b}
 
 <main class="wrap">
 <section class="panel">
-<div class="row">
-<div><h2 style="margin:0 0 6px">Capture My Work</h2><div class="muted">You control when capture is active and which sources are allowed.</div></div>
-<button id="captureBtn" class="primary" onclick="toggleCapture()">Start Capture</button>
+<div><h2 style="margin:0 0 6px">Add Work Evidence</h2><div class="muted">Record an accomplishment together with the source that can support it. New entries stay private until reviewed.</div></div>
+<form id="evidenceForm" onsubmit="addEvidence(event)">
+<div class="formgrid">
+<div class="field full"><label for="workTitle">Accomplishment</label><input id="workTitle" required placeholder="Example: Completed client project brief"></div>
+<div class="field"><label for="workSource">Evidence source</label><select id="workSource"><option>Project activity</option><option>Document</option><option>GitHub / code</option><option>Work app</option><option>Other source</option></select></div>
+<div class="field"><label for="workDate">Work date</label><input id="workDate" type="date" required></div>
+<div class="field full"><label for="workProof">Proof or source details</label><textarea id="workProof" required placeholder="Describe the evidence, file, link, record, or source that can be checked."></textarea></div>
 </div>
-<p id="captureStatus" class="status">Capture is OFF</p>
-<div class="notice">Prototype note: this page simulates captured work for demonstration. It does not access your computer, browser, email, documents, or external accounts.</div>
-<div class="sources">
-<div class="source"><label><input type="checkbox" checked> Project activity</label></div>
-<div class="source"><label><input type="checkbox"> Documents</label></div>
-<div class="source"><label><input type="checkbox"> GitHub / code</label></div>
-<div class="source"><label><input type="checkbox"> Work apps</label></div>
-</div>
+<div class="actions" style="margin-top:14px"><button type="submit" class="primary">Add to Private Review</button><button type="reset" class="secondary">Clear</button></div>
+</form>
+<div class="notice" style="margin-top:16px">Prototype note: this page demonstrates the evidence and verification workflow. It does not yet connect to external accounts or independently validate evidence.</div>
 </section>
 
 <section class="panel">
-<div class="row"><div><h2 style="margin:0 0 6px">Private Review Queue</h2><div class="muted">Nothing enters your Passport until you review it.</div></div>
-<button class="secondary" onclick="simulateWork()">Simulate New Work</button></div>
-<div id="queue"><div class="item" id="sample">
-<h3>Prepared client project brief</h3>
-<div class="meta">Source: Project activity · Captured: Oct 7, 2026 · Status: Private / Unreviewed</div>
-<div class="actions">
-<button class="primary" onclick="approve(this,'Prepared client project brief','Project activity')">Approve</button>
-<button class="verify" onclick="requestVerify(this)">Request Verification</button>
-<button class="danger" onclick="reject(this)">Reject</button>
-</div></div></div>
+<div><h2 style="margin:0 0 6px">Private Review Queue</h2><div class="muted">Nothing enters the official Passport until it is reviewed and marked verified.</div></div>
+<div id="queue"><div class="empty" id="queueEmpty">No evidence waiting for review.</div></div>
 </section>
 
 <section class="panel">
 <h2 style="margin-top:0">Passport Timeline</h2>
-<p class="muted">Approved evidence appears here with its source, date, and verification status preserved.</p>
+<p class="muted">Only evidence you mark verified can be added here. The source, date, and proof stay attached to the record.</p>
 <div id="timeline" class="timeline"><div class="empty" id="timelineEmpty">No approved evidence yet.</div></div>
 </section>
 
@@ -74,34 +68,47 @@ footer{text-align:center;padding:28px;color:#6c778b}
 <footer>AI Work Passport · Prototype — real capture integrations require a secure backend, authentication, permissions, and source connectors.</footer>
 
 <script>
-let capturing=false, n=1;
-function toggleCapture(){
- capturing=!capturing;
- const b=document.getElementById('captureBtn'), s=document.getElementById('captureStatus');
- b.textContent=capturing?'Stop Capture':'Start Capture';
- b.className=capturing?'danger':'primary';
- s.textContent=capturing?'Capture is ON — prototype simulation only':'Capture is OFF';
-}
-function simulateWork(){
- if(!capturing){alert('Start Capture first. This prototype will then simulate a new work event.');return;}
- n++;
- const q=document.getElementById('queue');
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+function addEvidence(e){
+ e.preventDefault();
+ const title=document.getElementById('workTitle').value.trim();
+ const source=document.getElementById('workSource').value;
+ const date=document.getElementById('workDate').value;
+ const proof=document.getElementById('workProof').value.trim();
+ const empty=document.getElementById('queueEmpty'); if(empty) empty.remove();
  const d=document.createElement('div'); d.className='item';
- d.innerHTML='<h3>Captured work item '+n+'</h3><div class="meta">Source: Project activity · Captured: Oct 7, 2026 · Status: Private / Unreviewed</div><div class="actions"><button class="primary" onclick="approve(this,\'Captured work item '+n+'\',\'Project activity\')">Approve</button><button class="verify" onclick="requestVerify(this)">Request Verification</button><button class="danger" onclick="reject(this)">Reject</button></div>';
- q.appendChild(d);
+ d.dataset.title=title; d.dataset.source=source; d.dataset.date=date; d.dataset.proof=proof; d.dataset.verified='no';
+ d.innerHTML='<div class="row"><h3>'+esc(title)+'</h3><span class="pill">Private / Unverified</span></div>'+
+ '<div class="meta">Source: '+esc(source)+' · Work date: '+esc(date)+'</div>'+
+ '<div class="proof"><strong>Evidence:</strong> '+esc(proof)+'</div>'+
+ '<div class="actions"><button class="verify" onclick="markVerified(this)">Mark Verified</button><button class="primary" onclick="addToPassport(this)" disabled>Add to Passport</button><button class="danger" onclick="reject(this)">Reject</button></div>';
+ document.getElementById('queue').appendChild(d);
+ e.target.reset();
 }
-function approve(btn,title,source){
- const item=btn.closest('.item'); const empty=document.getElementById('timelineEmpty'); if(empty) empty.remove();
+function markVerified(btn){
+ const item=btn.closest('.item'); item.dataset.verified='yes';
+ const pill=item.querySelector('.pill'); pill.textContent='Verified'; pill.className='pill good';
+ btn.textContent='Verified'; btn.disabled=true;
+ item.querySelector('.primary').disabled=false;
+}
+function addToPassport(btn){
+ const item=btn.closest('.item');
+ if(item.dataset.verified!=='yes') return;
+ const empty=document.getElementById('timelineEmpty'); if(empty) empty.remove();
  const e=document.createElement('div'); e.className='event';
- e.innerHTML='<strong>'+title+'</strong><div class="meta">Source: '+source+' · Added Oct 7, 2026</div><div class="verified">Approved by passport owner · Verification pending</div>';
- document.getElementById('timeline').appendChild(e); item.remove();
+ e.innerHTML='<strong>'+esc(item.dataset.title)+'</strong>'+
+ '<div class="meta">Source: '+esc(item.dataset.source)+' · Work date: '+esc(item.dataset.date)+'</div>'+
+ '<div class="proof"><strong>Evidence:</strong> '+esc(item.dataset.proof)+'</div>'+
+ '<div class="verified">Verified evidence · Added to Passport</div>';
+ document.getElementById('timeline').appendChild(e);
+ item.remove(); ensureQueueEmpty();
 }
-function requestVerify(btn){
- const item=btn.closest('.item'); const meta=item.querySelector('.meta');
- if(!meta.textContent.includes('Verification requested')) meta.textContent += ' · Verification requested';
- btn.textContent='Verification Requested'; btn.disabled=true;
+function reject(btn){btn.closest('.item').remove();ensureQueueEmpty();}
+function ensureQueueEmpty(){
+ const q=document.getElementById('queue');
+ if(!q.querySelector('.item')) q.innerHTML='<div class="empty" id="queueEmpty">No evidence waiting for review.</div>';
 }
-function reject(btn){btn.closest('.item').remove();}
+document.getElementById('workDate').value='2026-10-07';
 </script>
 </body>
 </html>
