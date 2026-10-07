@@ -137,6 +137,27 @@ footer{max-width:1180px;margin:auto;padding:0 22px 35px;color:#7b869b;font-size:
 </section>
 
 <main class="wrap">
+  <section class="panel" id="accountPanel">
+    <div class="panelHead">
+      <div><div class="kicker">Beta account</div><h2 id="accountTitle">Sign in to your Work Passport</h2><p id="accountText">Create a private account so your evidence is saved securely across devices.</p></div>
+      <span class="pill" id="accountPill">Not signed in</span>
+    </div>
+    <div id="authSignedOut">
+      <div class="formgrid">
+        <div class="field"><label>Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"></div>
+        <div class="field"><label>Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="At least 6 characters"></div>
+      </div>
+      <div class="actions" style="margin-top:14px">
+        <button class="btn primary" id="signInBtn" type="button">Sign In</button>
+        <button class="btn secondary" id="signUpBtn" type="button">Create Account</button>
+      </div>
+      <div class="notice" style="margin-top:14px">New accounts may be asked to confirm their email before the first sign-in.</div>
+    </div>
+    <div id="authSignedIn" style="display:none">
+      <div class="row"><div><strong id="signedInEmail"></strong><div class="meta">Private Work Passport account</div></div><button class="btn ghost" id="signOutBtn" type="button">Sign Out</button></div>
+    </div>
+  </section>
+
   <section class="gridStats">
     <div class="stat"><div class="n" id="statVerified">0</div><div class="l">Verified records</div></div>
     <div class="stat"><div class="n" id="statPending">0</div><div class="l">Pending review</div></div>
@@ -530,6 +551,160 @@ load();
 document.getElementById('workDate').value=new Date().toISOString().slice(0,10);
 renderAll();
 if(state.capture.running) startCaptureLoop(true);
+</script>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.3/+esm';
+
+const sb = createClient(
+  'https://fszgfgxipwnbwqtsphub.supabase.co',
+  'sb_publishable_L95ll7Wtjarl2lj2uwF4hA_ocnXAVd1'
+);
+let currentUser=null;
+
+function setAccountUI(){
+  const out=document.getElementById('authSignedOut'), inn=document.getElementById('authSignedIn');
+  const pill=document.getElementById('accountPill'), title=document.getElementById('accountTitle'), txt=document.getElementById('accountText');
+  if(currentUser){
+    out.style.display='none'; inn.style.display='block';
+    document.getElementById('signedInEmail').textContent=currentUser.email||'Signed in';
+    pill.textContent='Secure account active'; pill.className='pill good';
+    title.textContent='Your private Work Passport';
+    txt.textContent='Your evidence below is saved to your secure account.';
+  }else{
+    out.style.display='block'; inn.style.display='none';
+    pill.textContent='Not signed in'; pill.className='pill';
+    title.textContent='Sign in to your Work Passport';
+    txt.textContent='Create a private account so your evidence is saved securely across devices.';
+  }
+}
+function requireUser(){
+  if(currentUser)return true;
+  toast('Sign in first to save private evidence');
+  document.getElementById('accountPanel').scrollIntoView({behavior:'smooth'});
+  return false;
+}
+async function loadCloud(){
+  if(!currentUser){
+    state.pending=[]; state.verified=[];
+    renderAll(); return;
+  }
+  const [{data:profile,error:pe},{data:items,error:ie}] = await Promise.all([
+    sb.from('profiles').select('display_name,headline,public_slug,is_public').eq('user_id',currentUser.id).single(),
+    sb.from('evidence_items').select('*').eq('user_id',currentUser.id).order('work_date',{ascending:false})
+  ]);
+  if(pe) console.warn(pe);
+  if(ie){toast('Could not load evidence'); return;}
+  if(profile){
+    state.profile.name=profile.display_name||'Work Passport Holder';
+    state.profile.headline=profile.headline||'Verified record of work and demonstrated capability';
+  }
+  const map=x=>({
+    id:x.id,title:x.title,source:x.source_type,date:x.work_date,proof:x.proof_details,
+    skills:x.skills||[],verified:x.status==='verified',status:x.status,
+    added:x.created_at,officialAt:x.verified_at
+  });
+  state.pending=(items||[]).filter(x=>x.status!=='verified').map(map);
+  state.verified=(items||[]).filter(x=>x.status==='verified').map(map);
+  renderAll();
+}
+async function signIn(){
+  const email=document.getElementById('authEmail').value.trim();
+  const password=document.getElementById('authPassword').value;
+  if(!email||!password){toast('Enter email and password');return}
+  const {error}=await sb.auth.signInWithPassword({email,password});
+  if(error){toast(error.message);return}
+  toast('Signed in');
+}
+async function signUp(){
+  const email=document.getElementById('authEmail').value.trim();
+  const password=document.getElementById('authPassword').value;
+  if(!email||password.length<6){toast('Enter an email and a password of at least 6 characters');return}
+  const {data,error}=await sb.auth.signUp({
+    email,password,
+    options:{emailRedirectTo:'https://cdnemetsky.github.io/workpassport/'}
+  });
+  if(error){toast(error.message);return}
+  if(data.session) toast('Account created and signed in');
+  else toast('Account created — check your email to confirm it');
+}
+document.getElementById('signInBtn').onclick=signIn;
+document.getElementById('signUpBtn').onclick=signUp;
+document.getElementById('signOutBtn').onclick=async()=>{await sb.auth.signOut();toast('Signed out')};
+
+window.addEvidence=async function(e){
+  e.preventDefault(); if(!requireUser())return;
+  const payload={
+    user_id:currentUser.id,
+    title:document.getElementById('workTitle').value.trim(),
+    source_type:document.getElementById('workSource').value,
+    work_date:document.getElementById('workDate').value,
+    proof_details:document.getElementById('workProof').value.trim(),
+    skills:skillsFrom(document.getElementById('workSkills').value),
+    status:'private'
+  };
+  const {error}=await sb.from('evidence_items').insert(payload);
+  if(error){toast(error.message);return}
+  e.target.reset();
+  document.getElementById('workDate').value=new Date().toISOString().slice(0,10);
+  await loadCloud(); toast('Saved to your private review'); go('reviewPanel');
+};
+
+window.requestVerification=async function(id){
+  if(!requireUser())return;
+  const {error}=await sb.from('evidence_items').update({status:'pending_verification'}).eq('id',id).eq('user_id',currentUser.id);
+  if(error){toast(error.message);return}
+  await loadCloud(); toast('Verification requested');
+};
+window.removePending=async function(id){
+  if(!requireUser())return;
+  const {error}=await sb.from('evidence_items').delete().eq('id',id).eq('user_id',currentUser.id);
+  if(error){toast(error.message);return}
+  await loadCloud(); toast('Evidence removed');
+};
+window.removeVerified=function(){toast('Verified records are protected; use the verification process to change them')};
+window.markVerified=function(id){window.requestVerification(id)};
+window.addToPassport=function(){toast('Only independently verified evidence enters the official Passport')};
+
+window.renderQueue=function(){
+  const q=document.getElementById('queue');
+  if(!currentUser){q.innerHTML='<div class="empty">Sign in to see your private evidence.</div>';return}
+  if(!state.pending.length){q.innerHTML='<div class="empty">No evidence waiting for review.</div>';return}
+  q.innerHTML=state.pending.map(x=>{
+    const waiting=x.status==='pending_verification';
+    return `<div class="queueItem">
+      <div class="row"><div><strong>${esc(x.title)}</strong><div class="meta">${esc(x.source)} · ${niceDate(x.date)}</div></div>
+      <span class="pill ${waiting?'warn':''}">${waiting?'Verification requested':'Private'}</span></div>
+      <div class="proof"><strong>Evidence:</strong> ${esc(x.proof)}</div>
+      ${x.skills?.length?'<div class="skills">'+x.skills.map(s=>'<span class="skill">'+esc(s)+'</span>').join('')+'</div>':''}
+      <div class="actions" style="margin-top:13px">
+        <button class="btn verify" onclick="requestVerification('${x.id}')" ${waiting?'disabled':''}>${waiting?'Verification Requested':'Request Verification'}</button>
+        <button class="btn danger" onclick="removePending('${x.id}')">Remove</button>
+      </div></div>`;
+  }).join('');
+};
+
+window.editProfile=async function(){
+  if(!requireUser())return;
+  const name=prompt('Passport holder name:',state.profile.name); if(name===null)return;
+  const headline=prompt('Professional headline:',state.profile.headline); if(headline===null)return;
+  const {error}=await sb.from('profiles').update({
+    display_name:name.trim()||'Work Passport Holder',
+    headline:headline.trim()||'Verified record of work and demonstrated capability'
+  }).eq('user_id',currentUser.id);
+  if(error){toast(error.message);return}
+  await loadCloud(); toast('Profile updated');
+};
+
+sb.auth.onAuthStateChange(async (_event,session)=>{
+  currentUser=session?.user||null;
+  setAccountUI();
+  await loadCloud();
+});
+const {data:{session}}=await sb.auth.getSession();
+currentUser=session?.user||null;
+setAccountUI();
+await loadCloud();
 </script>
 </body>
 </html>
