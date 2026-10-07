@@ -107,6 +107,7 @@ footer{max-width:1180px;margin:auto;padding:0 22px 35px;color:#7b869b;font-size:
   <div class="topinner">
     <div class="brand"><div class="logo">WP</div><span>AI Work Passport</span></div>
     <div class="nav">
+      <button onclick="go('capturePanel')">Capture</button>
       <button onclick="go('passportPanel')">Passport</button>
       <button onclick="go('addPanel')">Add Evidence</button>
       <button onclick="go('reviewPanel')">Review</button>
@@ -141,6 +142,43 @@ footer{max-width:1180px;margin:auto;padding:0 22px 35px;color:#7b869b;font-size:
     <div class="stat"><div class="n" id="statPending">0</div><div class="l">Pending review</div></div>
     <div class="stat"><div class="n" id="statSources">0</div><div class="l">Evidence sources</div></div>
     <div class="stat"><div class="n" id="statSkills">0</div><div class="l">Skills shown</div></div>
+  </section>
+
+  <section class="panel" id="capturePanel">
+    <div class="panelHead">
+      <div>
+        <div class="kicker">Real source connection</div>
+        <h2>Capture My Work</h2>
+        <p>Capture evidence from approved work sources while you work. New items stay private until you review them.</p>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="captureToggle" onclick="toggleCapture()">Start Capture</button>
+        <button class="btn secondary" onclick="captureGitHub(true)">Check GitHub Now</button>
+      </div>
+    </div>
+
+    <div class="notice" style="margin-bottom:14px">
+      <strong>First real connector:</strong> this version can read public GitHub commit activity directly from GitHub. It does not read private repositories, your computer, or other accounts. Automatic checking runs only while this page is open and Capture is ON.
+    </div>
+
+    <div class="formgrid">
+      <div class="field">
+        <label for="githubOwner">GitHub owner</label>
+        <input id="githubOwner" value="cdnemetsky" onchange="saveCaptureSettings()" placeholder="Example: cdnemetsky">
+      </div>
+      <div class="field">
+        <label for="githubRepo">Repository</label>
+        <input id="githubRepo" value="workpassport" onchange="saveCaptureSettings()" placeholder="Example: workpassport">
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:14px">
+      <div>
+        <div class="status" id="captureStatus" style="font-weight:800">Capture is OFF</div>
+        <div class="meta" id="captureDetail">No GitHub check has run yet.</div>
+      </div>
+      <span class="pill" id="connectorPill">GitHub public activity</span>
+    </div>
   </section>
 
   <section class="panel" id="passportPanel">
@@ -249,11 +287,20 @@ const KEY='aiWorkPassport_v3';
 let state={
   profile:{name:'Work Passport Holder',headline:'Verified record of work and demonstrated capability'},
   pending:[],
-  verified:[]
+  verified:[],
+  capture:{running:false,githubOwner:'cdnemetsky',githubRepo:'workpassport',seen:[],lastCheck:null}
 };
+let captureTimer=null;
 function save(){localStorage.setItem(KEY,JSON.stringify(state));renderAll()}
 function load(){
-  try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&x.profile&&Array.isArray(x.pending)&&Array.isArray(x.verified))state=x}catch(e){}
+  try{
+    const x=JSON.parse(localStorage.getItem(KEY));
+    if(x&&x.profile&&Array.isArray(x.pending)&&Array.isArray(x.verified))state=x;
+  }catch(e){}
+  if(!state.capture) state.capture={running:false,githubOwner:'cdnemetsky',githubRepo:'workpassport',seen:[],lastCheck:null};
+  if(!Array.isArray(state.capture.seen)) state.capture.seen=[];
+  if(!state.capture.githubOwner) state.capture.githubOwner='cdnemetsky';
+  if(!state.capture.githubRepo) state.capture.githubRepo='workpassport';
 }
 function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
@@ -261,6 +308,106 @@ function niceDate(s){if(!s)return '—';const d=new Date(s+'T12:00:00');return d
 function skillsFrom(s){return String(s||'').split(',').map(x=>x.trim()).filter(Boolean)}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
 function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'})}
+
+function saveCaptureSettings(){
+  const owner=(document.getElementById('githubOwner')?.value||'').trim();
+  const repo=(document.getElementById('githubRepo')?.value||'').trim();
+  if(owner) state.capture.githubOwner=owner;
+  if(repo) state.capture.githubRepo=repo;
+  localStorage.setItem(KEY,JSON.stringify(state));
+}
+function renderCapture(){
+  const owner=document.getElementById('githubOwner'), repo=document.getElementById('githubRepo');
+  if(owner) owner.value=state.capture.githubOwner||'cdnemetsky';
+  if(repo) repo.value=state.capture.githubRepo||'workpassport';
+  const btn=document.getElementById('captureToggle');
+  const status=document.getElementById('captureStatus');
+  const detail=document.getElementById('captureDetail');
+  const pill=document.getElementById('connectorPill');
+  if(btn){
+    btn.textContent=state.capture.running?'Stop Capture':'Start Capture';
+    btn.className='btn '+(state.capture.running?'danger':'primary');
+  }
+  if(status) status.textContent=state.capture.running?'Capture is ON':'Capture is OFF';
+  if(detail){
+    detail.textContent=state.capture.lastCheck
+      ? 'Last GitHub check: '+new Date(state.capture.lastCheck).toLocaleString()
+      : 'No GitHub check has run yet.';
+  }
+  if(pill){
+    pill.className='pill '+(state.capture.running?'good':'');
+    pill.textContent=state.capture.running?'GitHub connector active':'GitHub public activity';
+  }
+}
+async function captureGitHub(manual=false){
+  saveCaptureSettings();
+  const owner=state.capture.githubOwner, repo=state.capture.githubRepo;
+  if(!owner||!repo){toast('Enter a GitHub owner and repository');return}
+  const detail=document.getElementById('captureDetail');
+  if(detail) detail.textContent='Checking GitHub…';
+  try{
+    const url='https://api.github.com/repos/'+encodeURIComponent(owner)+'/'+encodeURIComponent(repo)+'/commits?per_page=10';
+    const res=await fetch(url,{headers:{'Accept':'application/vnd.github+json'}});
+    if(!res.ok) throw new Error(res.status===404?'Repository not found or not public':'GitHub returned '+res.status);
+    const commits=await res.json();
+    let added=0;
+    const existing=new Set([
+      ...state.pending.map(x=>x.externalId).filter(Boolean),
+      ...state.verified.map(x=>x.externalId).filter(Boolean),
+      ...(state.capture.seen||[])
+    ]);
+    const candidates=manual ? commits.slice(0,5).reverse() : commits.slice().reverse();
+    for(const c of candidates){
+      if(!c||!c.sha||existing.has(c.sha)) continue;
+      const when=c.commit?.author?.date||c.commit?.committer?.date||new Date().toISOString();
+      const msg=(c.commit?.message||'GitHub commit').split('\n')[0].trim();
+      const item={
+        id:uid(),
+        title:msg||'GitHub commit',
+        source:'GitHub / code',
+        date:when.slice(0,10),
+        proof:'Captured directly from GitHub public activity. Commit '+c.sha.slice(0,7)+'.',
+        skills:['Code contribution'],
+        verified:false,
+        added:new Date().toISOString(),
+        externalId:c.sha,
+        sourceUrl:c.html_url||'',
+        capturedAt:new Date().toISOString(),
+        sourceAuthenticated:true,
+        provenanceLabel:owner+'/'+repo
+      };
+      state.pending.unshift(item);
+      state.capture.seen.push(c.sha);
+      existing.add(c.sha);
+      added++;
+    }
+    state.capture.seen=state.capture.seen.slice(-200);
+    state.capture.lastCheck=new Date().toISOString();
+    localStorage.setItem(KEY,JSON.stringify(state));
+    renderAll();
+    toast(added?('Captured '+added+' GitHub item'+(added===1?'':'s')+' into private review'):'GitHub checked — no new work found');
+  }catch(err){
+    if(detail) detail.textContent='GitHub check failed: '+err.message;
+    toast('GitHub check failed');
+  }
+}
+function startCaptureLoop(runNow=true){
+  if(captureTimer) clearInterval(captureTimer);
+  if(runNow) captureGitHub(false);
+  captureTimer=setInterval(()=>captureGitHub(false),60000);
+}
+function stopCaptureLoop(){
+  if(captureTimer) clearInterval(captureTimer);
+  captureTimer=null;
+}
+function toggleCapture(){
+  saveCaptureSettings();
+  state.capture.running=!state.capture.running;
+  localStorage.setItem(KEY,JSON.stringify(state));
+  if(state.capture.running) startCaptureLoop(true); else stopCaptureLoop();
+  renderCapture();
+  toast(state.capture.running?'Capture started':'Capture stopped');
+}
 
 function addEvidence(e){
   e.preventDefault();
@@ -308,7 +455,11 @@ function renderQueue(){
         <div><strong>${esc(x.title)}</strong><div class="meta">${esc(x.source)} · ${niceDate(x.date)}</div></div>
         <span class="pill ${x.verified?'good':'warn'}">${x.verified?'Verified':'Private / Unverified'}</span>
       </div>
-      <div class="proof"><strong>Evidence:</strong> ${esc(x.proof)}</div>
+      <div class="proof"><strong>Evidence:</strong> ${esc(x.proof)}
+        ${x.sourceUrl?'<br><strong>Source link:</strong> <a href="'+esc(x.sourceUrl)+'" target="_blank" rel="noopener">Open source record</a>':''}
+        ${x.provenanceLabel?'<br><strong>Provenance:</strong> '+esc(x.provenanceLabel)+(x.capturedAt?' · captured '+new Date(x.capturedAt).toLocaleString():''):''}
+      </div>
+      ${x.sourceAuthenticated?'<span class="pill good">Source captured directly</span>':''}
       ${x.skills.length?'<div class="skills">'+x.skills.map(s=>'<span class="skill">'+esc(s)+'</span>').join('')+'</div>':''}
       <div class="actions" style="margin-top:13px">
         <button class="btn verify" onclick="markVerified('${x.id}')" ${x.verified?'disabled':''}>${x.verified?'Verified':'Mark Verified'}</button>
@@ -332,7 +483,11 @@ function renderTimeline(){
         <div><strong>${esc(x.title)}</strong><div class="meta">${esc(x.source)} · ${niceDate(x.date)}</div></div>
         <span class="pill good">Verified</span>
       </div>
-      <div class="proof"><strong>Evidence:</strong> ${esc(x.proof)}</div>
+      <div class="proof"><strong>Evidence:</strong> ${esc(x.proof)}
+        ${x.sourceUrl?'<br><strong>Source link:</strong> <a href="'+esc(x.sourceUrl)+'" target="_blank" rel="noopener">Open source record</a>':''}
+        ${x.provenanceLabel?'<br><strong>Provenance:</strong> '+esc(x.provenanceLabel)+(x.capturedAt?' · captured '+new Date(x.capturedAt).toLocaleString():''):''}
+      </div>
+      ${x.sourceAuthenticated?'<span class="pill good">Source captured directly</span>':''}
       ${x.skills?.length?'<div class="skills">'+x.skills.map(s=>'<span class="skill">'+esc(s)+'</span>').join('')+'</div>':''}
       <div class="actions" style="margin-top:12px"><button class="btn ghost" onclick="removeVerified('${x.id}')">Remove from Passport</button></div>
     </div>`).join('');
@@ -370,10 +525,11 @@ function copyPassportSummary(){
   state.verified.forEach(x=>lines.push(`• ${x.title} — ${x.source}, ${niceDate(x.date)}`));
   navigator.clipboard?.writeText(lines.join('\n')).then(()=>toast('Passport summary copied')).catch(()=>toast('Copy is not available in this browser'));
 }
-function renderAll(){renderProfile();renderQueue();renderFilters();renderTimeline()}
+function renderAll(){renderProfile();renderQueue();renderFilters();renderTimeline();renderCapture()}
 load();
 document.getElementById('workDate').value=new Date().toISOString().slice(0,10);
 renderAll();
+if(state.capture.running) startCaptureLoop(true);
 </script>
 </body>
 </html>
