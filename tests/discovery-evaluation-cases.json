@@ -1,0 +1,85 @@
+[
+  {
+    "id": "maintenance-intake",
+    "known_strengths": ["reliable", "good with repairs"],
+    "activity": "People kept leaving incomplete repair messages, so I listened to the last twenty calls and wrote down which details were usually missing. I made a one-page prompt for apartment number, urgency, access times, and a photo when useful. After a week, I moved access times before the problem description because that was what delayed us most.",
+    "candidate": {
+      "abilities": [
+        {
+          "category": "ability",
+          "name": "Practical systems design",
+          "observation": "Turned repeated communication failures into a structured intake process and refined the sequence after observing the main delay.",
+          "quote": "I listened to the last twenty calls and wrote down which details were usually missing.",
+          "rationale": "The activity shows a move from individual repair handling to diagnosis and redesign of the surrounding workflow, which is less obvious than the stated repair skill.",
+          "uncertainty": "This may reflect a one-time sensible improvement rather than a repeatable systems-design ability; authorship and later results are self-reported.",
+          "next_evidence": "A second example of diagnosing and improving a different recurring process, with before-and-after records.",
+          "confidence": "supported"
+        }
+      ],
+      "limitations": "One self-submitted activity supports a bounded workflow-design hypothesis, not a general claim about strategic ability."
+    },
+    "rejected_guesses": ["Leadership", "Technical expertise", "High intelligence"]
+  },
+  {
+    "id": "meal-route",
+    "known_strengths": ["helpful", "organized"],
+    "activity": "Two drivers cancelled after the meal boxes were already packed. I marked every delivery that had a strict time, grouped the remaining stops by elevator buildings and walk-ups, and called three recipients whose times could move. Nobody had to take more than two extra stops, and I saved the revised route so next week's coordinator could see why it changed.",
+    "candidate": {
+      "abilities": [
+        {
+          "category": "ability",
+          "name": "Constraint-aware contingency planning",
+          "observation": "Replanned under sudden capacity loss by separating fixed constraints from flexible ones and distributing the burden.",
+          "quote": "I marked every delivery that had a strict time, grouped the remaining stops by elevator buildings and walk-ups, and called three recipients whose times could move.",
+          "rationale": "The sequence demonstrates prioritization under constraints, not merely general organization or willingness to help.",
+          "uncertainty": "The result is self-reported, and one route change does not establish performance in larger or higher-risk situations.",
+          "next_evidence": "Another time-sensitive replanning example, preferably with the original and revised schedules.",
+          "confidence": "supported"
+        },
+        {
+          "category": "demonstrated_quality",
+          "name": "Consideration when allocating burden",
+          "observation": "Limited the extra load on each remaining driver while preserving essential deliveries.",
+          "quote": "Nobody had to take more than two extra stops",
+          "rationale": "In this activity, the decision may suggest attention to fairness alongside task completion.",
+          "uncertainty": "This is an observation about one allocation decision, not a verified declaration that the person is generally fair or considerate.",
+          "next_evidence": "Repeated decisions showing how competing burdens were allocated and explained.",
+          "confidence": "tentative"
+        }
+      ],
+      "limitations": "The sample supports contextual hypotheses only; it does not independently verify outcomes or broad character traits."
+    },
+    "rejected_guesses": ["Executive leadership", "Empathy", "Logistics professional"]
+  },
+  {
+    "id": "ai-assumption-check",
+    "known_strengths": ["curious", "uses AI"],
+    "activity": "The answer looked confident, but it assumed the lower monthly cost was the best choice. I asked the AI to list every assumption it had made, separate cash flow from total cost, and rerun the comparison if I sold after one, two, or three years. When the numbers changed, I asked it to show the formula instead of giving me another recommendation.",
+    "candidate": {
+      "abilities": [
+        {
+          "category": "ability",
+          "name": "Assumption testing",
+          "observation": "Detected an unstated decision criterion and forced the analysis to expose assumptions, time horizons, and formulas.",
+          "quote": "I asked the AI to list every assumption it had made, separate cash flow from total cost, and rerun the comparison if I sold after one, two, or three years.",
+          "rationale": "The behavior goes beyond curiosity or ordinary AI use: it demonstrates active testing of the model behind a recommendation.",
+          "uncertainty": "The transcript excerpt does not show whether the person independently checked the formulas or applied this method elsewhere.",
+          "next_evidence": "A second decision where assumptions were surfaced and independently checked against source data.",
+          "confidence": "supported"
+        },
+        {
+          "category": "demonstrated_quality",
+          "name": "Willingness to revise the frame",
+          "observation": "Changed the question after noticing that the original comparison optimized the wrong outcome.",
+          "quote": "The answer looked confident, but it assumed the lower monthly cost was the best choice.",
+          "rationale": "In this exchange, the person did not defend the original framing and instead corrected it when the hidden assumption became visible.",
+          "uncertainty": "One AI conversation cannot establish general intellectual humility or openness to correction.",
+          "next_evidence": "Examples involving the person's own mistaken assumption, not only correction of an AI output.",
+          "confidence": "tentative"
+        }
+      ],
+      "limitations": "This excerpt supports bounded reasoning behaviors, not intelligence, financial expertise, or a global personality assessment."
+    },
+    "rejected_guesses": ["Financial expertise", "High IQ", "Skeptical personality"]
+  }
+]
