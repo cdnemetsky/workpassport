@@ -1,3 +1,32 @@
+# Product architecture clarification — October 8, 2026
+
+## The core proposition
+**Your greatness deserves to be discovered.** The distinctive aspiration is not to catalog known skills or produce a résumé. It is to uncover *unexpected* strengths from subtle patterns in a person's authorized real activities, then substantiate each discovery as far as the evidence allows. This is a product hypothesis to test, not a claim of uniqueness or proof of an inner trait.
+
+## One discovery technology, three connected product experiences
+**Shared Living Discovery Engine:** permission-scoped observation and artifact ingestion; behavioral observations; candidate ability hypotheses; source-linked evidence; uncertainty, counterexamples and reassessment; ongoing changes over time (the Living Pulse). The engine should identify potential beyond known job titles and surface genuinely surprising insights, while never inventing proof. Avoid silent monitoring and unsupported character judgments.
+
+**Discover Yourself (standalone experience):** a private-first discovery product useful even to someone who never shares a Passport. Show meaningful unexpected insights, why AI suggested them, confidence/limitations, and ways to challenge or refine findings. The ongoing Pulse belongs here and within the Passport experience; it is not the separate matching service.
+
+**AI Work Passport (current implementation priority):** private portable representation of approved evidence-supported findings, provenance and consent, selective sharing, review, deletion and revocation. Its central user experience should be Discover Yourself + Living Pulse, rather than a résumé-style display. Existing sample-based assessment is an initial step toward the Pulse, not the finished Pulse.
+
+**Opportunity Matching Platform (separate connected product; plan architecture now, do not implement as part of current Passport assignment):** with explicit opt-in, use evidence-supported Passport findings to identify where abilities could be useful. Eventually search genuine external opportunity sources as well as opted-in demand; distinguish verified opportunities from unconfirmed leads and hypothetical suggestions. Never expose private evidence, identity or contact details, or make introductions without permission. Not restricted to job seeking.
+
+## Two distinct discovery dimensions
+1. Abilities and ingenuity: unconventional thinking, creativity, problem-solving, judgment, resourcefulness, organization, emerging aptitudes.
+2. Subtle qualities reflected in observable behavior: patience in communication, careful correction, fairness in decisions, consistency and helpfulness. These are tentative contextual inferences, not verified declarations of someone's inner character. Avoid sensitive-trait profiling and high-stakes automatic judgments.
+
+## Evidence and validation rules
+Capture source identity and timestamp when authorized, provenance, consent scope, relevant artifact and attribution limitations. Contemporaneous records strengthen traceability but do not independently prove authorship or the correctness of an inferred ability. Keep clear statuses for source-linked, identity-associated, independently verified, and AI-inferred. The user may share a general assessment without exposing raw private evidence; viewers must know when they cannot inspect the evidence.
+
+## Product test that determines value
+Test whether repeated authorized everyday activities allow the AI to find useful, *unexpected* abilities that people did not explicitly report, with defensible evidence and calibrated uncertainty. Evaluate false positives, novelty, usefulness, privacy, repeatability and human review. If it only relabels conventional skills, the core proposition has not yet been demonstrated.
+
+## Current scope for the implementation agent
+Build and test the Passport with its Discover Yourself and Living Pulse engine; design interfaces that a future matching product can use, but do not divert implementation effort into the separate matching service. Preserve useful existing work. Clearly label sample assessment versus ongoing capture, and prototype versus genuinely functional components.
+
+---
+
 # AI Work Passport — Master Product Specification
 Version: 0.1 • October 8, 2026 • Working plan, not a claim of completed functionality
 
