@@ -160,13 +160,16 @@ input,textarea,select{border-radius:12px;padding:12px 13px}
 .visualStep b{display:block;font-size:12px}.visualStep span{font-size:10px;color:#7a8599}
 @media(max-width:700px){.visualSteps{grid-template-columns:1fr 1fr}.passportSeal{display:none}.securityCode{width:58px;height:58px}}
 
+body:not(.loggedIn) #appNav,body:not(.loggedIn) .gridStats,body:not(.loggedIn) #capturePanel,body:not(.loggedIn) #passportPanel,body:not(.loggedIn) #addPanel,body:not(.loggedIn) #reviewPanel,body:not(.loggedIn) #timelinePanel,body:not(.loggedIn) #accountPanel~.panel,body:not(.loggedIn) #accountPanel~.infoCards{display:none!important}
+body.loggedIn #publicIntro{display:none}
+@media(max-width:700px){.hero h1{font-size:clamp(30px,8vw,45px)}}
 </style>
 </head>
 <body>
 <div class="topbar">
   <div class="topinner">
     <div class="brand"><div class="logo">AI</div><div><span>AI Work Passport</span><div style="font-size:9px;letter-spacing:.12em;color:#9fb3df;margin-top:2px">EVIDENCE · VERIFICATION · PORTABILITY</div></div></div>
-    <div class="nav">
+    <div class="nav" id="appNav">
       <button onclick="go('capturePanel')">Capture</button>
       <button onclick="go('passportPanel')">Passport</button>
       <button onclick="go('addPanel')">Add Evidence</button>
@@ -179,12 +182,12 @@ input,textarea,select{border-radius:12px;padding:12px 13px}
 <section class="hero">
   <div class="heroInner">
     <div>
-      <div class="eyebrow">Verified · Portable · Evidence-backed</div>
-      <h1>Your work. Your proof. Your passport.</h1>
-      <p>A portable work record built around evidence. Claims stay private until reviewed, and only verified evidence belongs in the official Passport.</p>
+      <div class="eyebrow">From experience to opportunity</div>
+      <h1>Turn what you’ve done into a stronger résumé.</h1>
+      <p>Remember your accomplishments, show the skills you used, and build a résumé from real experience — even work that never came with a job title. Keep your records private until you choose to share them.</p>
       <div class="actions" style="margin-top:22px">
-        <button class="btn primary" onclick="go('addPanel')">Add Work Evidence</button>
-        <button class="btn secondary" onclick="go('passportPanel')">View Passport</button>
+        <button class="btn primary" onclick="openAuth('signup')">Create My Free Account</button>
+        <button class="btn secondary" onclick="openAuth('signin')">Sign In</button>
       </div>
     </div>
     <div class="trustcard"><div class="credentialEmblem" aria-hidden="true"></div>
@@ -197,12 +200,22 @@ input,textarea,select{border-radius:12px;padding:12px 13px}
 </section>
 
 <main class="wrap">
+<section id="publicIntro" class="panel">
+ <div class="kicker">Why use it?</div><h2>Build a résumé that remembers more than job titles.</h2>
+ <p>Most people forget valuable work they've done. Record a project, describe what you accomplished, and save evidence if you have it. Your Work Passport organizes that experience so you can use it when preparing a résumé, applying for a position, or explaining your skills.</p>
+ <div class="infoCards" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))">
+  <div class="info"><h3>1. Record your work</h3><p>“I organized a community event for 150 people.”</p></div>
+  <div class="info"><h3>2. Show your skills</h3><p>Planning, communication, budgeting, and coordination.</p></div>
+  <div class="info"><h3>3. Build your résumé</h3><p>Turn your experience into clear accomplishments you can copy into a résumé.</p></div>
+ </div>
+ <p class="small">This is an early beta. Résumé drafting is being developed; independently verified credentials are not automatic.</p>
+</section>
   <section class="panel" id="accountPanel">
     <div class="panelHead">
       <div><div class="kicker">Beta account</div><h2 id="accountTitle">Sign in to your Work Passport</h2><p id="accountText">Create a private account so your evidence is saved securely across devices.</p></div>
       <span class="pill" id="accountPill">Not signed in</span>
     </div>
-    <div id="authSignedOut">
+    <div id="authSignedOut"><p id="authModeHelp">Already have an account? Sign in below, or choose Create Account to register.</p>
       <div class="formgrid">
         <div class="field"><label>Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"></div>
         <div class="field"><label>Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="At least 6 characters"></div>
@@ -624,16 +637,27 @@ const sb = createClient(
 );
 let currentUser=null;
 
+window.openAuth=function(mode){
+ document.getElementById('accountPanel').scrollIntoView({behavior:'smooth'});
+ const signUp=mode==='signup';
+ document.getElementById('confirmPasswordWrap').style.display=signUp?'block':'none';
+ document.getElementById('authModeHelp').textContent=signUp?'Create an account with your email and a password entered twice.':'Welcome back. Enter your email and password.';
+ document.getElementById('signUpBtn').className='btn '+(signUp?'primary':'secondary');
+ document.getElementById('signInBtn').className='btn '+(signUp?'secondary':'primary');
+ document.getElementById('authEmail').focus({preventScroll:true});
+};
 function setAccountUI(){
   const out=document.getElementById('authSignedOut'), inn=document.getElementById('authSignedIn');
   const pill=document.getElementById('accountPill'), title=document.getElementById('accountTitle'), txt=document.getElementById('accountText');
   if(currentUser){
+    document.body.classList.add('loggedIn');
     out.style.display='none'; inn.style.display='block';
     document.getElementById('signedInEmail').textContent=currentUser.email||'Signed in';
     pill.textContent='Secure account active'; pill.className='pill good';
     title.textContent='Your private Work Passport';
     txt.textContent='Your evidence below is saved to your secure account.';
   }else{
+    document.body.classList.remove('loggedIn');
     out.style.display='block'; inn.style.display='none';
     pill.textContent='Not signed in'; pill.className='pill';
     title.textContent='Sign in to your Work Passport';
@@ -682,6 +706,7 @@ async function signUp(){
   const email=document.getElementById('authEmail').value.trim();
   const password=document.getElementById('authPassword').value;
   if(!email||password.length<6){toast('Enter an email and a password of at least 6 characters');return}
+  if(password!==document.getElementById('authPasswordConfirm').value){openAuth('signup');toast('Passwords must match');return}
   const {data,error}=await sb.auth.signUp({
     email,password,
     options:{emailRedirectTo:'https://cdnemetsky.github.io/workpassport/'}
