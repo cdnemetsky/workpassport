@@ -7,10 +7,11 @@ Discover abilities demonstrated through actual work, with permission, evidence a
 - Responsive ability-centered website on GitHub Pages.
 - Supabase account sign-in/signup, password confirmation and visibility, email confirmation resend.
 - Private text/file sample submission with permission, SHA-256 content hash and context.
-- Server-side AI assessment endpoint: exact-source-quote validation, explicit uncertainty, private review and no independent-verification claims.
+- Server-side full-spectrum discovery endpoint: separately categorized demonstrated abilities and personal qualities, exact-source-quote validation, explicit uncertainty, private review and no independent-verification claims.
 - Approve, dispute, hide, delete sample and related assessments; Passport JSON export.
+- Living Talent Pulse: real counts, recurring reviewed patterns across distinct activities, and a dated assessment timeline. It updates from submitted activity; continuous authorized-source capture is not implemented yet.
 - Selected seven-day shared views with revocation. Original samples, account email and context are excluded.
-- Private future Talent Pulse preferences. No discovery network or automated outreach exists yet.
+- The separate future opportunity-matching product is not implemented in this repository.
 
 ## Live dependencies
 
@@ -18,7 +19,7 @@ Supabase project `fszgfgxipwnbwqtsphub`; database extension is `database-abiliti
 
 **AI is not connected until `OPENAI_API_KEY` is set as a Supabase Edge Function secret.** Without it, work samples save privately and assessment returns an explicit unavailable message. No fake model results are substituted. Default model is `gpt-4.1-mini`; `OPENAI_MODEL` can override it. Keep secrets out of this repository.
 
-Signup redirect is `https://cdnemetsky.github.io/workpassport/`. Supabase Auth's Site URL and allowed redirect must include this exact URL. Existing tester reported a confirmation link failure; server-side URL configuration has not yet been inspected or corrected through the available connector. Email delivery and real signup require end-to-end testing.
+Signup redirect is `https://cdnemetsky.github.io/workpassport/`. Supabase Auth's Site URL and allowed redirect were updated to this exact URL on October 8, 2026. Email delivery and real signup still require end-to-end testing.
 
 ## Run locally
 
@@ -30,7 +31,7 @@ Browser smoke test: install Playwright and its Chromium browser, then `node test
 ## Limits before production launch
 
 - No AI provider secret configured by this development session; no real AI-output or model-quality evaluation completed.
-- Confirmation redirect service configuration still needs checking; broken previously issued links may need to be resent.
+- Newly issued confirmation links should use the corrected redirect; broken previously issued links may need to be resent. Real signup still needs end-to-end verification.
 - No continuous capture, source ownership verification, independent skill verification, identity verification or employer network.
 - File loading accepts text only. No private binary object uploads, PDF parser or background assessment queue.
 - Assessment quota is a basic daily completed-assessment check, not a fully atomic concurrency limit. Add reservations and stronger abuse controls before broad launch.

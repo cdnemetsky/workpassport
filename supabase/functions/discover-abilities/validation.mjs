@@ -5,7 +5,8 @@ export function validateFindings(result, source) {
    if(typeof a[key]!=='string'||!a[key].trim()||a[key].length>2000) throw new Error('Incomplete assessment');
   if(!source.includes(a.quote)) throw new Error('Assessment cited text outside the work sample');
   if(!['tentative','supported'].includes(a.confidence)) throw new Error('Invalid confidence');
-  return Object.fromEntries(['name','observation','quote','rationale','uncertainty','next_evidence','confidence'].map(k=>[k,a[k]]));
+  if(!['ability','demonstrated_quality'].includes(a.category)) throw new Error('Invalid finding category');
+  return Object.fromEntries(['category','name','observation','quote','rationale','uncertainty','next_evidence','confidence'].map(k=>[k,a[k]]));
  });
  if(typeof result.limitations!=='string'||result.limitations.length>3000) throw new Error('Missing limitations');
  return {abilities,limitations:result.limitations};

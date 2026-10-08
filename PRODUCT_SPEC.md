@@ -31,16 +31,28 @@ Build and test the Passport with its Discover Yourself and Living Pulse engine; 
 Version: 0.1 • October 8, 2026 • Working plan, not a claim of completed functionality
 
 ## Product promise
-**Discover your talents. Prove your abilities. Let opportunities find you.**
+**Your greatness deserves to be discovered.**
+
+Supporting promise: **Discover your talents. Prove your abilities. Let opportunities find you.**
 
 AI Work Passport is a consent-based, living record that uses AI to **infer and assess abilities demonstrated through actual work**. It is not primarily a résumé maker or an accomplishment log. It helps people discover strengths they may not recognize, attaches traceable supporting evidence, and lets them selectively share credible demonstrations of capability.
 
+## Full-spectrum discovery principle
+The Passport looks for what a person's authorized activities may reveal, including strengths that conventional résumés overlook. It should recognize both visible capabilities and quieter patterns, while never turning uncertain behavioral clues into definitive character claims.
+
+Two separately labeled families of findings are required:
+
+1. **Demonstrated abilities** — creativity, ingenuity, practical judgment, problem-solving, strategic thinking, foresight, learning ability, curiosity, organization, initiative, resourcefulness, attention to detail, consistency, and opportunity recognition.
+2. **Demonstrated personal qualities** — observable signs of patience, consideration, thoughtfulness, fairness, careful communication, correction of mistakes, dependability, responsibility, respectfulness, and helpfulness.
+
+Every personal-quality finding must describe the behavior actually observed and use calibrated language such as “this interaction shows…” or “may suggest…”. The system must not diagnose personality, infer protected or sensitive traits, or generalize a single interaction into a global claim about character.
+
 ## Core user experience
 1. **Discover my abilities**: submit a work sample or connect a supported source. Explain what is being analyzed and obtain informed permission.
-2. **Ability discovery**: AI proposes skills, aptitudes and strengths based on specific observed behaviors and artifacts. Every finding links to the evidence, explanation, confidence and limitations. Distinguish observed facts from inference.
+2. **Ability discovery**: AI proposes skills, aptitudes, strengths and demonstrated personal qualities based on specific observed behaviors and artifacts. Every finding links to the evidence, explanation, confidence and limitations. Distinguish observed facts from inference.
 3. **Review and control**: user can accept, dispute, hide, delete, or request reassessment of findings. Private by default.
 4. **Living Passport**: abilities develop over time with supporting examples, dates, source records and assessment changes.
-5. **Share selectively**: create a limited-scope, revocable view for employers, collaborators or other recipients. Résumé export is optional, secondary.
+5. **Share selectively**: create a limited-scope, revocable view for employers, collaborators or other recipients. For each shared view, the holder can share a finding with selected supporting evidence, share the general finding without exposing private evidence, or omit it entirely. When evidence is withheld, recipients must be told that they cannot independently inspect it. Résumé export is optional, secondary.
 6. **Opportunities**: in a later Talent Pulse Network, opted-in users may be discovered for opportunities based on evidence-backed abilities, with user-controlled introductions.
 
 ## Evidence and credibility
@@ -58,7 +70,7 @@ AI Work Passport is a consent-based, living record that uses AI to **infer and a
 
 ## AI assessment engine
 Input: permitted work artifact + source context + user-provided role/context.
-Output: structured observations, candidate abilities, supporting evidence references, alternative explanations, confidence/uncertainty, suggested next evidence, model/version and review status.
+Output: structured observations, a finding family (`ability` or `demonstrated_quality`), candidate abilities or qualities, supporting evidence references, alternative explanations, confidence/uncertainty, suggested next evidence, model/version and review status.
 Guardrails: no fabricated proof; no unsupported personality diagnoses; avoid sensitive-trait inference; flag teamwork attribution ambiguity; allow correction and appeals. Use clear language: 'AI-suggested ability' until validated.
 Evaluation: build a small consented test set, compare outputs to human review, track false positives, evidence traceability and repeatability. Avoid numerical precision without calibration.
 
@@ -79,6 +91,7 @@ Evaluation: build a small consented test set, compare outputs to human review, t
 **M5 — Talent Pulse Network (later):** opt-in discoverability, permission-based introductions, evidence-aware matching, privacy and fairness review.
 
 ## Product language and first impression
+Guiding message: **Your greatness deserves to be discovered.**
 Hero: **Discover your talents. Prove your abilities. Let opportunities find you.**
 Supporting copy: 'Your AI Work Passport helps recognize abilities demonstrated through real work, preserves supporting evidence, and builds a living record of your strengths. You choose what to approve and share.'
 Primary action: **Discover My Abilities**.
