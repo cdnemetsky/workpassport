@@ -1,0 +1,20 @@
+[
+  {
+    "participant_id": "p01",
+    "known_self_description": "I am dependable and practical.",
+    "activities": [
+      {"id":"p01-a","context":"Personal errand planning.","sample":"I kept reaching the far end of the store and realizing that one item was back near the entrance. Before the next trip, I copied the list into the order of the aisles and put uncertain items in a separate section. After two trips I moved frozen food to the end because the checkout line was sometimes long."},
+      {"id":"p01-b","context":"Helping arrange seats for a community gathering.","sample":"The first seating plan fit everyone on paper, but it put the people arriving late behind chairs they would have to move. I marked which seats needed a clear path, shifted two tables, and kept four flexible seats near the door until everyone arrived."},
+      {"id":"p01-c","context":"Comparing three payment choices.","sample":"The lowest monthly payment looked best until I wrote down the total paid at one year, three years, and the full term. I added a row for what I would still owe if I stopped early, because that changed which option was actually cheaper for me."}
+    ]
+  },
+  {
+    "participant_id": "p02",
+    "known_self_description": "I like helping people and explain things clearly.",
+    "activities": [
+      {"id":"p02-a","context":"Explaining an online form to relatives.","sample":"I first wrote a full page of instructions, but two people stopped at the same screen. I replaced that paragraph with one screenshot and a circle around the button. Then I asked someone who had never used the form to try it without me talking."},
+      {"id":"p02-b","context":"Using AI to draft an announcement.","sample":"The draft sounded polished but several people could read the deadline two different ways. I asked for three interpretations of the sentence, chose the shortest wording that removed the ambiguity, and tested it by asking two people what date they thought it meant."},
+      {"id":"p02-c","context":"Leaving instructions for a substitute volunteer.","sample":"Instead of listing everything in the order I usually do it, I separated what must happen before opening from what can wait. I added a short section called 'If only one thing goes wrong' because that was the situation where a new person would be least sure what mattered."}
+    ]
+  }
+]
